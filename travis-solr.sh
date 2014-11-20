@@ -186,6 +186,7 @@ add_core() {
 
     # copies default config as the basis
     cp -R "${dir_name}/example/solr/conf/"* "${dir_name}/example/multicore/${solr_core}/conf/"
+    ls -lisa "${dir_name}/example/multicore/${solr_core}/conf/"
 
     # copies custom configurations
     if [ -d "${solr_confs}" ] ; then
