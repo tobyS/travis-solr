@@ -184,6 +184,9 @@ add_core() {
     [[ -d "${dir_name}/example/multicore/${solr_core}" ]] || mkdir $dir_name/example/multicore/$solr_core
     [[ -d "${dir_name}/example/multicore/${solr_core}/conf" ]] || mkdir $dir_name/example/multicore/$solr_core/conf
 
+    # copies default config as the basis
+    cp -R "${dir_name}/example/solr/conf/*" "${dir_name}/example/multicore/${solr_core}/conf/"
+
     # copies custom configurations
     if [ -d "${solr_confs}" ] ; then
       cp -R $solr_confs/* $dir_name/example/multicore/$solr_core/conf/
