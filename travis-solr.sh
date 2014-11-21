@@ -20,8 +20,8 @@ download() {
 }
 
 is_solr_up(){
-    echo "Checking if solr is up on http://localhost:$SOLR_PORT/solr/admin/cores"
-    http_code=`echo $(curl -s -o /dev/null -w "%{http_code}" "http://localhost:$SOLR_PORT/solr/admin/cores")`
+    echo "Checking if solr is up on http://localhost:$SOLR_PORT/solr/admin"
+    http_code=`echo $(curl -s -o /dev/null -w "%{http_code}" "http://localhost:$SOLR_PORT/solr/admin")`
     return `test $http_code = "200"`
 }
 
@@ -40,13 +40,13 @@ run() {
     echo "Starting solr on port ${solr_port}..."
 
     # go to the solr folder
-    cd $1/example
+    cd $dir_name/example
 
     if [ "$DEBUG" = "true" ]
     then
-        java -Djetty.port=$solr_port -Dsolr.solr.home=multicore -jar start.jar &
+        java -Djetty.port=$solr_port -jar start.jar &
     else
-        java -Djetty.port=$solr_port -Dsolr.solr.home=multicore -jar start.jar > /dev/null 2>&1 &
+        java -Djetty.port=$solr_port -jar start.jar > /dev/null 2>&1 &
     fi
     wait_for_solr
     cd ../../
@@ -181,21 +181,17 @@ add_core() {
     solr_core=$3
     solr_confs=$4
     # prepare our folders
-    [[ -d "${dir_name}/example/multicore/${solr_core}" ]] || mkdir $dir_name/example/multicore/$solr_core
-    [[ -d "${dir_name}/example/multicore/${solr_core}/conf" ]] || mkdir $dir_name/example/multicore/$solr_core/conf
-
-    # copies default config as the basis
-    cp -R "${dir_name}/example/solr/conf/"* "${dir_name}/example/multicore/${solr_core}/conf/"
-    ls -lisa "${dir_name}/example/multicore/${solr_core}/conf/"
+    [[ -d "${dir_name}/example/solr/" ]] || mkdir $dir_name/example/solr
+    [[ -d "${dir_name}/example/solr/conf" ]] || mkdir $dir_name/example/solr/conf
 
     # copies custom configurations
     if [ -d "${solr_confs}" ] ; then
-      cp -R $solr_confs/* $dir_name/example/multicore/$solr_core/conf/
+      cp -R $solr_confs/* $dir_name/example/solr/conf/
     else
       for file in $solr_confs
       do
         if [ -f "${file}" ]; then
-            cp $file $dir_name/example/multicore/$solr_core/conf
+            cp $file $dir_name/example/solr/conf
             echo "Copied $file into solr conf directory."
         else
             echo "${file} is not valid";
